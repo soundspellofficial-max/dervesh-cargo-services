@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DERVESH CARGO SERVICES — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="theme-color" content="#0b4d2b" />
+</head>
+<body>
+  <div class="bg"></div>
+
+  <main class="container">
+    <section class="brand">
+      <img src="assets/logo-darvesh.png" alt="Dervesh Cargo Services Logo" class="logo" />
+      <h1 class="title"><span>DERVESH</span> CARGO SERVICES</h1>
+      <p class="tagline">Fast • Safe • Reliable</p>
+    </section>
+
+    <section class="card">
+      <h2>Welcome back</h2>
+      <p class="muted">Sign in to continue to your dashboard</p>
+
+      <form id="loginForm" novalidate>
+        <label for="email">Email or Username</label>
+        <input id="email" name="email" type="text" placeholder="you@example.com" required />
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required />
+
+        <div class="row">
+          <label class="checkbox">
+            <input type="checkbox" id="remember" />
+            <span>Remember me</span>
+          </label>
+          <a class="link" href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn">Sign In</button>
+      </form>
+
+      <div id="msg" class="msg" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    © <span id="year"></span> Dervesh Cargo Services. All rights reserved.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
