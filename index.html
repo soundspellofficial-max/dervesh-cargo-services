@@ -1,55 +1,207 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>DERVESH CARGO SERVICES — Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-  <meta name="theme-color" content="#0b4d2b" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --deep-green:#134b2b; /* matches logo */
+      --muted-green:#eaf4ec;
+      --accent:#0f3f25;
+      --glass: rgba(255,255,255,0.06);
+      --card-shadow: 0 8px 30px rgba(7,20,10,0.18);
+    }
+    *{box-sizing:border-box}
+    body{font-family: 'Montserrat', system-ui, Arial; margin:0; min-height:100vh; background:linear-gradient(180deg,#f7fbf8 0%, #e9f3ec 100%); display:flex; align-items:center; justify-content:center; padding:32px}
+
+    .wrap{width:980px; max-width:98%; display:grid; grid-template-columns:480px 1fr; gap:28px; align-items:center}
+
+    /* Left card */
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.9)); border-radius:18px; padding:36px; box-shadow:var(--card-shadow); display:flex; flex-direction:column; gap:18px}
+
+    .brand{display:flex; gap:14px; align-items:center}
+    .brand img{width:86px; height:86px; object-fit:contain}
+    .brand h1{font-family:'Playfair Display'; margin:0; color:var(--deep-green); font-size:22px; letter-spacing:1px}
+    .brand p{margin:0; color:var(--accent); font-size:12px}
+
+    .intro{color:#29402f; font-weight:500; margin-top:6px}
+    .desc{font-size:13px; color:#5a6b5a}
+
+    form{display:flex; flex-direction:column; gap:12px; margin-top:6px}
+    label{font-size:12px; color:#23402f}
+    input[type='text'], input[type='password']{padding:12px 14px; border-radius:10px; border:1px solid rgba(19,75,43,0.08); background:#fff; font-size:14px}
+
+    .field{display:flex; flex-direction:column}
+    .row{display:flex; gap:10px}
+
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 16px; border-radius:12px; background:var(--deep-green); color:#fff; font-weight:700; border:none; cursor:pointer}
+    .btn.secondary{background:transparent; border:1px solid rgba(19,75,43,0.12); color:var(--deep-green); font-weight:600}
+
+    .note{font-size:12px; color:#6b7a6b}
+
+    .cred-box{background:var(--muted-green); border-radius:10px; padding:10px; font-size:13px; color:var(--deep-green); display:flex; gap:8px; align-items:center}
+    .cred-box kbd{background:#fff; padding:6px 8px; border-radius:6px; font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+
+    /* Right visual */
+    .visual{display:flex; align-items:center; justify-content:center; position:relative}
+    .visual .panel{width:100%; height:100%; border-radius:18px; padding:24px; display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(19,75,43,0.05), rgba(19,75,43,0.02)); border:1px solid rgba(19,75,43,0.04)}
+    .ship{width:84%; max-width:420px}
+
+    /* Decorative container SVG */
+    .container-svg{width:100%; max-width:420px}
+
+    .success{background:linear-gradient(90deg, rgba(17,96,60,0.12), rgba(17,96,60,0.06)); color:var(--deep-green); padding:10px 14px; border-radius:10px; border:1px solid rgba(17,96,60,0.08)}
+
+    footer{font-size:12px; color:#6a7a6a; text-align:center}
+
+    @media (max-width:860px){
+      .wrap{grid-template-columns:1fr;}
+      .visual{order:-1}
+    }
+  </style>
 </head>
 <body>
-  <div class="bg"></div>
+  <div class="wrap">
+    <div class="card" role="main">
+      <div class="brand">
+        <!-- Logo provided by user - update path if needed -->
+        <img src="/mnt/data/WhatsApp Image 2025-08-25 at 11.41.23 PM.jpeg" alt="Dervesh Cargo Logo">
+        <div>
+          <h1>DERVESH CARGO SERVICES</h1>
+          <p>Fast • Safe • Reliable</p>
+        </div>
+      </div>
 
-  <main class="container">
-    <section class="brand">
-      <img src="assets/logo-darvesh.png" alt="Dervesh Cargo Services Logo" class="logo" />
-      <h1 class="title"><span>DERVESH</span> CARGO SERVICES</h1>
-      <p class="tagline">Fast • Safe • Reliable</p>
-    </section>
+      <div class="intro">Welcome back — please sign in to continue to the admin dashboard.</div>
+      <div class="desc">Stylish, secure login for DERVESH CARGO SERVICES. Use the demo credential shown below for initial access. For production, replace client-side checks with server authentication.</div>
 
-    <section class="card">
-      <h2>Welcome back</h2>
-      <p class="muted">Sign in to continue to your dashboard</p>
+      <div class="cred-box" aria-hidden="true">
+        <div><strong>Demo admin:</strong></div>
+        <kbd>admin</kbd>
+        <div style="opacity:0.9">/</div>
+        <kbd>DERVESH123</kbd>
+      </div>
 
-      <form id="loginForm" novalidate>
-        <label for="email">Email or Username</label>
-        <input id="email" name="email" type="text" placeholder="you@example.com" required />
-
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="••••••••" required />
-
-        <div class="row">
-          <label class="checkbox">
-            <input type="checkbox" id="remember" />
-            <span>Remember me</span>
-          </label>
-          <a class="link" href="#">Forgot password?</a>
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" value="admin" required>
         </div>
 
-        <button type="submit" class="btn">Sign In</button>
+        <div class="field">
+          <label for="password">Password</label>
+          <div style="display:flex; gap:8px; align-items:center">
+            <input id="password" name="password" type="password" value="DERVESH123" required style="flex:1">
+            <button type="button" class="btn secondary" onclick="togglePassword()" aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:6px">
+          <button class="btn" type="submit">Sign In</button>
+          <button type="button" class="btn secondary" onclick="fillGuest()">Guest</button>
+        </div>
+
+        <div id="message" role="status" aria-live="polite"></div>
       </form>
 
-      <div id="msg" class="msg" aria-live="polite"></div>
-    </section>
-  </main>
+      <div style="margin-top:6px; display:flex; gap:8px; align-items:center; justify-content:space-between">
+        <div class="note">Need help? Contact <strong>support@derveshcargo.com</strong></div>
+        <div style="font-size:12px; color:#4b5a4b">Version 1.0</div>
+      </div>
 
-  <footer class="footer">
-    © <span id="year"></span> Dervesh Cargo Services. All rights reserved.
-  </footer>
+    </div>
 
-  <script src="script.js"></script>
+    <div class="visual">
+      <div class="panel">
+        <!-- Decorative container / ship illustration (SVG) -->
+        <svg class="container-svg" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0%" stop-color="#114f2e" stop-opacity="0.14"/>
+              <stop offset="100%" stop-color="#0b3b23" stop-opacity="0.06"/>
+            </linearGradient>
+          </defs>
+          <rect x="10" y="220" width="780" height="120" rx="18" fill="#133b27" opacity="0.08"/>
+          <!-- Ship hull -->
+          <path d="M80 320 L720 320 C740 320 755 300 755 280 L745 260 L135 260 L125 280 C125 300 140 320 160 320 Z" fill="#0f3f25" opacity="0.95"/>
+          <!-- Containers stack -->
+          <g transform="translate(140,110)" fill="#154a2b">
+            <rect x="0" y="0" width="80" height="40" rx="4"/>
+            <rect x="86" y="0" width="80" height="40" rx="4"/>
+            <rect x="172" y="0" width="80" height="40" rx="4"/>
+            <rect x="258" y="0" width="80" height="40" rx="4"/>
+            <rect x="344" y="0" width="80" height="40" rx="4"/>
+
+            <rect x="0" y="48" width="80" height="40" rx="4"/>
+            <rect x="86" y="48" width="80" height="40" rx="4"/>
+            <rect x="172" y="48" width="80" height="40" rx="4"/>
+            <rect x="258" y="48" width="80" height="40" rx="4"/>
+          </g>
+
+          <!-- Logo monogram accent on top-right -->
+          <g transform="translate(600,40) scale(0.9)">
+            <circle cx="40" cy="40" r="40" fill="url(#g1)"/>
+            <text x="18" y="54" font-family="Playfair Display, serif" font-size="46" fill="#06361e">DC</text>
+          </g>
+
+        </svg>
+
+        <div style="max-width:520px; text-align:center">
+          <h3 style="margin:6px 0 0 0; color:var(--deep-green); font-family:'Playfair Display';">Secure Container Tracking</h3>
+          <p style="margin:6px 0 0 0; color:#45624a; font-size:14px">Your shipments — monitored and managed with precision. This is a demo login page; integrate with your server for production authentication.</p>
+        </div>
+
+        <div class="success" style="margin-top:12px">Admin account ready • username: <strong>admin</strong> • password: <strong>DERVESH123</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="width:980px; max-width:98%; margin-top:18px">© <strong>DERVESH CARGO SERVICES</strong> — All rights reserved.</footer>
+
+  <script>
+    const ADMIN_USER = 'admin';
+    const ADMIN_PASS = 'DERVESH123';
+
+    function togglePassword(){
+      const p = document.getElementById('password');
+      const btn = event.currentTarget || event.target;
+      if(p.type === 'password'){ p.type='text'; btn.textContent='Hide' } else { p.type='password'; btn.textContent='Show' }
+    }
+
+    function fillGuest(){
+      document.getElementById('username').value = 'guest';
+      document.getElementById('password').value = 'guest123';
+      showMessage('Guest credentials filled — limited access', 'info');
+    }
+
+    function showMessage(text, type){
+      const msg = document.getElementById('message');
+      msg.innerHTML = `<div style='padding:10px;border-radius:8px;background:rgba(19,75,43,0.06);color:var(--deep-green)'>${text}</div>`;
+    }
+
+    function handleLogin(e){
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+
+      // NOTE: This is client-side demo validation only. Replace with server-side auth.
+      if(u === ADMIN_USER && p === ADMIN_PASS){
+        showMessage('✅ Login successful — Redirecting to Admin Dashboard...');
+        // Simulate redirect
+        setTimeout(()=>{
+          alert('Welcome, admin! (This demo would redirect to the dashboard.)')
+        },450);
+        return false;
+      }
+
+      // fallback: simple check
+      showMessage('❌ Invalid credentials. Use admin / DERVESH123 for demo.');
+      return false;
+    }
+  </script>
 </body>
 </html>
