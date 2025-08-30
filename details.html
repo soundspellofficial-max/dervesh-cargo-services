@@ -176,3 +176,68 @@
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Details - Dervesh Cargo</title>
+  <style>
+    body{font-family:Arial;background:#f9fdfb;padding:20px;}
+    h2{color:#134b2b;text-align:center;}
+    .search-box{max-width:400px;margin:20px auto;display:flex;gap:10px;}
+    .search-box input{flex:1;padding:8px;border:1px solid #ccc;border-radius:6px;}
+    table{width:100%;border-collapse:collapse;margin-top:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+    th,td{padding:12px;border:1px solid #eee;text-align:left;}
+    th{background:#134b2b;color:#fff;}
+    tr:hover{background:#f1f7f4;}
+  </style>
+</head>
+<body>
+  <h2>Booking Details</h2>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search by Name or Booking Number...">
+  </div>
+
+  <table id="bookingTable">
+    <thead>
+      <tr>
+        <th>Booking Number</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    let tableBody = document.querySelector("#bookingTable tbody");
+
+    function renderTable(data){
+      tableBody.innerHTML = "";
+      data.forEach(b=>{
+        let row = `<tr>
+          <td>${b.number}</td>
+          <td>${b.name}</td>
+          <td>${b.date}</td>
+          <td>${b.details}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    renderTable(bookings);
+
+    document.getElementById("searchInput").addEventListener("input", function(){
+      let val = this.value.toLowerCase();
+      let filtered = bookings.filter(b =>
+        b.name.toLowerCase().includes(val) ||
+        b.number.toLowerCase().includes(val)
+      );
+      renderTable(filtered);
+    });
+  </script>
+</body>
+</html>
