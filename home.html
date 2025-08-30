@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" window.location.href = "home.html"; />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>DERVESH CARGO SERVICES — Home</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
     .hero p{font-size:16px;max-width:600px;margin:0 auto}
 
     .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;padding:40px;max-width:1200px;margin:0 auto}
-    .card{background:#fff;padding:28px;border-radius:18px;box-shadow:var(--card-shadow);transition:transform .25s}
+    .card{background:#fff;padding:28px;border-radius:18px;box-shadow:var(--card-shadow);transition:transform .25s;text-decoration:none;color:inherit;display:block}
     .card:hover{transform:translateY(-6px)}
     .card h3{color:var(--deep-green);margin-bottom:10px;font-size:18px}
     .card p{font-size:14px;color:#4b5a4b}
@@ -41,11 +41,11 @@
   <header>
     <h1>DERVESH CARGO SERVICES</h1>
     <nav>
-      <a href="#booking">Booking</a>
-      <a href="#details">Booking Details</a>
-      <a href="#gadons">Gadon</a>
-      <a href="#accounts">Accounts</a>
-      <a href="#daybook">Daybook</a>
+      <a href="booking.html">Booking</a>
+      <a href="details.html">Booking Details</a>
+      <a href="gadons.html">Gadon</a>
+      <a href="accounts.html">Accounts</a>
+      <a href="daybook.html">Daybook</a>
     </nav>
   </header>
 
@@ -57,26 +57,26 @@
   </section>
 
   <section class="cards">
-    <div id="booking" class="card">
+    <a href="booking.html" class="card">
       <h3>Booking</h3>
       <p>Create and manage new bookings seamlessly.</p>
-    </div>
-    <div id="details" class="card">
+    </a>
+    <a href="details.html" class="card">
       <h3>Booking Details</h3>
       <p>Track and view details of all your bookings in one place.</p>
-    </div>
-    <div id="gadons" class="card">
+    </a>
+    <a href="gadons.html" class="card">
       <h3>Gadon</h3>
       <p>Manage gadon information, allocation, and tracking easily.</p>
-    </div>
-    <div id="accounts" class="card">
+    </a>
+    <a href="accounts.html" class="card">
       <h3>Accounts</h3>
       <p>Keep financials up-to-date with simple and powerful tools.</p>
-    </div>
-    <div id="daybook" class="card">
+    </a>
+    <a href="daybook.html" class="card">
       <h3>Daybook</h3>
       <p>Maintain your day-to-day records and cargo movements effortlessly.</p>
-    </div>
+    </a>
   </section>
 
   <footer>© 2025 DERVESH CARGO SERVICES — All rights reserved.</footer>
