@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DERVESH CARGO SERVICES — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --deep-green:#134b2b;
+      --muted-green:#eaf4ec;
+      --accent:#0f3f25;
+      --card-shadow:0 8px 30px rgba(7,20,10,0.18);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Montserrat',system-ui,Arial;background:linear-gradient(180deg,#f7fbf8 0%, #e9f3ec 100%);color:#213321;min-height:100vh;display:flex;flex-direction:column}
+    header{background:var(--deep-green);color:#fff;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--card-shadow)}
+    header h1{font-family:'Playfair Display';font-size:24px;letter-spacing:1px}
+    nav{display:flex;gap:20px}
+    nav a{color:#fff;text-decoration:none;font-weight:600;transition:color .2s}
+    nav a:hover{color:#c9f1d8}
+
+    .hero{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 20px;background:url('https://images.unsplash.com/photo-1543362906-acfc16c67564?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;color:#fff;position:relative}
+    .hero::after{content:'';position:absolute;inset:0;background:rgba(19,75,43,0.55)}
+    .hero-content{position:relative;z-index:2}
+    .hero h2{font-size:42px;font-family:'Playfair Display';margin-bottom:10px}
+    .hero p{font-size:16px;max-width:600px;margin:0 auto}
+
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;padding:40px;max-width:1200px;margin:0 auto}
+    .card{background:#fff;padding:28px;border-radius:18px;box-shadow:var(--card-shadow);transition:transform .25s}
+    .card:hover{transform:translateY(-6px)}
+    .card h3{color:var(--deep-green);margin-bottom:10px;font-size:18px}
+    .card p{font-size:14px;color:#4b5a4b}
+
+    footer{background:#123c25;color:#d7e9db;padding:20px;text-align:center;font-size:13px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DERVESH CARGO SERVICES</h1>
+    <nav>
+      <a href="#booking">Booking</a>
+      <a href="#details">Booking Details</a>
+      <a href="#gadons">Gadon</a>
+      <a href="#accounts">Accounts</a>
+      <a href="#daybook">Daybook</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h2>Fast, Safe, and Reliable Cargo Solutions</h2>
+      <p>Welcome to the official system of Dervesh Cargo Services. Manage bookings, track gadon, handle accounts, and record daybook all from one stylish dashboard.</p>
+    </div>
+  </section>
+
+  <section class="cards">
+    <div id="booking" class="card">
+      <h3>Booking</h3>
+      <p>Create and manage new bookings seamlessly.</p>
+    </div>
+    <div id="details" class="card">
+      <h3>Booking Details</h3>
+      <p>Track and view details of all your bookings in one place.</p>
+    </div>
+    <div id="gadons" class="card">
+      <h3>Gadon</h3>
+      <p>Manage gadon information, allocation, and tracking easily.</p>
+    </div>
+    <div id="accounts" class="card">
+      <h3>Accounts</h3>
+      <p>Keep financials up-to-date with simple and powerful tools.</p>
+    </div>
+    <div id="daybook" class="card">
+      <h3>Daybook</h3>
+      <p>Maintain your day-to-day records and cargo movements effortlessly.</p>
+    </div>
+  </section>
+
+  <footer>© 2025 DERVESH CARGO SERVICES — All rights reserved.</footer>
+</body>
+</html>
