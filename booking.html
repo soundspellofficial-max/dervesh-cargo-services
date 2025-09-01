@@ -2,214 +2,110 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dervesh Cargo Services - Booking</title>
+  <title>Booking Details - Dervesh Cargo Services</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #0066cc, #00ccff);
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 800px;
-      margin: 20px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
-    textarea {
-      resize: none;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    /* Slip Styling */
-    .slip {
-      display: none;
-      margin-top: 30px;
-      padding: 20px;
-      border: 2px dashed #333;
-      border-radius: 10px;
-      background: #f9f9f9;
-    }
-    .slip h3 {
-      text-align: center;
-      margin-bottom: 15px;
-      color: #007bff;
-    }
-    .slip p {
-      margin: 5px 0;
-      font-size: 14px;
-    }
-    .print-btn {
-      margin-top: 15px;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      background: #28a745;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .print-btn:hover {
-      background: #1e7e34;
-    }
+    body { font-family: Arial, sans-serif; background: #eef2f7; }
+    h2 { text-align: center; color: #333; }
+    table { width: 95%; margin: 20px auto; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #007bff; color: white; }
+    button { background: #28a745; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
+    button:hover { background: #218838; }
+    .search-box { width: 90%; margin: 15px auto; text-align: center; }
+    .search-box input { width: 60%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Booking Form</h2>
-    <form id="bookingForm">
-      <div class="form-group">
-        <label>Bilty No</label>
-        <input type="text" id="biltyNo" readonly>
-      </div>
-      <div class="form-group">
-        <label>Date</label>
-        <input type="text" id="date" readonly>
-      </div>
-      <div class="form-group">
-        <label>Sender Name</label>
-        <input type="text" id="sender" required>
-      </div>
-      <div class="form-group">
-        <label>Receiver Name</label>
-        <input type="text" id="receiver" required>
-      </div>
-      <div class="form-group">
-        <label>Vehicle No</label>
-        <input type="text" id="vehicle" required>
-      </div>
-      <div class="form-group">
-        <label>Driver Name</label>
-        <input type="text" id="driver" required>
-      </div>
-      <div class="form-group">
-        <label>Driver Phone No</label>
-        <input type="text" id="driverPhone" required>
-      </div>
-      <div class="form-group">
-        <label>Weight</label>
-        <input type="number" id="weight" required>
-      </div>
-      <div class="form-group">
-        <label>Quantity</label>
-        <input type="number" id="quantity" required>
-      </div>
-      <div class="form-group">
-        <label>Prices</label>
-        <input type="number" id="price" required>
-      </div>
-      <div class="form-group">
-        <label>Remarks</label>
-        <textarea id="remarks" rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Pick up Location</label>
-        <input type="text" id="pickup" required>
-      </div>
-      <div class="form-group">
-        <label>Drop Location</label>
-        <input type="text" id="drop" required>
-      </div>
-      <button type="submit">Submit Booking</button>
-    </form>
 
-    <!-- Slip Section -->
-    <div id="slip" class="slip">
-      <h3>Booking Slip</h3>
-      <div id="slipContent"></div>
-      <button class="print-btn" onclick="window.print()">🖨️ Print Slip</button>
-    </div>
+  <h2>Booking Details</h2>
+
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Search by Bilty No, Date, or Name...">
   </div>
 
+  <table id="detailsTable">
+    <thead>
+      <tr>
+        <th>Bilty No</th>
+        <th>Date</th>
+        <th>Sender</th>
+        <th>Receiver</th>
+        <th>Vehicle</th>
+        <th>Driver</th>
+        <th>Weight</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Pickup</th>
+        <th>Drop</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
   <script>
-    // Auto Bilty No
-    document.getElementById("biltyNo").value = "BILTY-" + Math.floor(Math.random()*100000);
-
-    // Auto Date
-    let today = new Date();
-    let date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
-    document.getElementById("date").value = date;
-
-    // Submit
-    document.getElementById("bookingForm").addEventListener("submit", function(e){
-      e.preventDefault();
-
-      // Get values
-      const data = {
-        bilty: document.getElementById("biltyNo").value,
-        date: document.getElementById("date").value,
-        sender: document.getElementById("sender").value,
-        receiver: document.getElementById("receiver").value,
-        vehicle: document.getElementById("vehicle").value,
-        driver: document.getElementById("driver").value,
-        driverPhone: document.getElementById("driverPhone").value,
-        weight: document.getElementById("weight").value,
-        quantity: document.getElementById("quantity").value,
-        price: document.getElementById("price").value,
-        remarks: document.getElementById("remarks").value,
-        pickup: document.getElementById("pickup").value,
-        drop: document.getElementById("drop").value
-      };
-
-      // Save to LocalStorage (Booking Details)
+    function loadBookings() {
       let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-      bookings.push(data);
-      localStorage.setItem("bookings", JSON.stringify(bookings));
+      let tbody = document.querySelector("#detailsTable tbody");
+      tbody.innerHTML = "";
 
-      // Show Slip
-      let slipHTML = `
-        <p><b>Bilty No:</b> ${data.bilty}</p>
-        <p><b>Date:</b> ${data.date}</p>
-        <p><b>Sender:</b> ${data.sender}</p>
-        <p><b>Receiver:</b> ${data.receiver}</p>
-        <p><b>Vehicle:</b> ${data.vehicle}</p>
-        <p><b>Driver:</b> ${data.driver} (${data.driverPhone})</p>
-        <p><b>Weight:</b> ${data.weight} | <b>Qty:</b> ${data.quantity}</p>
-        <p><b>Price:</b> ${data.price}</p>
-        <p><b>Pickup:</b> ${data.pickup}</p>
-        <p><b>Drop:</b> ${data.drop}</p>
-        <p><b>Remarks:</b> ${data.remarks}</p>
+      bookings.forEach(b => {
+        let row = `
+          <tr>
+            <td>${b.biltyNo}</td>
+            <td>${b.date}</td>
+            <td>${b.sender}</td>
+            <td>${b.receiver}</td>
+            <td>${b.vehicle}</td>
+            <td>${b.driver} (${b.driverPhone})</td>
+            <td>${b.weight}</td>
+            <td>${b.qty}</td>
+            <td>${b.price}</td>
+            <td>${b.pickup}</td>
+            <td>${b.drop}</td>
+            <td><button onclick="printSlip('${b.biltyNo}')">Print</button></td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function printSlip(biltyNo) {
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      let b = bookings.find(x => x.biltyNo === biltyNo);
+
+      let slip = `
+        <h2>Dervesh Cargo Services</h2>
+        <p><b>Bilty No:</b> ${b.biltyNo}</p>
+        <p><b>Date:</b> ${b.date}</p>
+        <p><b>Sender:</b> ${b.sender}</p>
+        <p><b>Receiver:</b> ${b.receiver}</p>
+        <p><b>Vehicle:</b> ${b.vehicle}</p>
+        <p><b>Driver:</b> ${b.driver} (${b.driverPhone})</p>
+        <p><b>Weight:</b> ${b.weight}</p>
+        <p><b>Quantity:</b> ${b.qty}</p>
+        <p><b>Price:</b> ${b.price}</p>
+        <p><b>Pickup:</b> ${b.pickup}</p>
+        <p><b>Drop:</b> ${b.drop}</p>
+        <p><b>Remarks:</b> ${b.remarks}</p>
       `;
-      document.getElementById("slipContent").innerHTML = slipHTML;
-      document.getElementById("slip").style.display = "block";
 
-      // Reset form
-      document.getElementById("bookingForm").reset();
+      let w = window.open("", "", "width=600,height=400");
+      w.document.write(slip);
+      w.print();
+    }
+
+    // Search filter
+    document.getElementById("search").addEventListener("keyup", function() {
+      let value = this.value.toLowerCase();
+      let rows = document.querySelectorAll("#detailsTable tbody tr");
+      rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+      });
     });
+
+    window.onload = loadBookings;
   </script>
+
+</body>
+</html>
