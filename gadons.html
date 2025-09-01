@@ -2,195 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Darvesh Cargo - Godown</title>
+  <title>Darvesh Cargo - Godown & Gate Pass</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f9; margin:0; padding:20px; }
-    h2 { text-align:center; color:#333; margin-bottom:20px; }
-    .form-box, .stock-box {
-      background:#fff; padding:20px; margin:15px auto; border-radius:12px;
-      max-width:800px; box-shadow:0 3px 12px rgba(0,0,0,0.1);
-    }
-    input, select {
-      width:100%; padding:10px; margin:6px 0; border-radius:6px; border:1px solid #ccc;
-    }
-    button {
-      background:#007bff; color:#fff; border:none; padding:10px 20px;
-      border-radius:6px; cursor:pointer; margin-top:10px;
-    }
-    button:hover { background:#0056b3; }
-    table { width:100%; border-collapse: collapse; margin-top:20px; }
-    th, td { border:1px solid #ddd; padding:10px; text-align:center; }
-    th { background:#007bff; color:#fff; }
-    .delete-btn { background:red; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
-    .print-btn { background:green; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
-    .search-bar { margin:10px 0; padding:10px; width:100%; border-radius:8px; border:1px solid #aaa; }
+    body { font-family: Arial, sans-serif; background:#f5f7fa; margin:20px; }
+    h1, h2 { text-align:center; color:#2c3e50; }
+    .container { max-width:1200px; margin:auto; }
+    .card { background:#fff; padding:20px; margin:15px 0; border-radius:10px; box-shadow:0 3px 6px rgba(0,0,0,0.1); }
+    input, button, select { padding:8px; margin:5px; border:1px solid #ccc; border-radius:6px; }
+    button { background:#3498db; color:#fff; cursor:pointer; }
+    button:hover { background:#2980b9; }
+    table { width:100%; border-collapse:collapse; margin-top:15px; }
+    th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+    th { background:#3498db; color:#fff; }
+    .search-bar { margin:10px 0; text-align:right; }
+    .ledger-box { background:#fafafa; padding:10px; margin:10px 0; border-left:4px solid #3498db; }
   </style>
 </head>
 <body>
-  <h2>Godown Stock Management</h2>
+  <div class="container">
+    <h1>📦 Darvesh Cargo - Godown</h1>
 
-  <!-- Stock Entry Form -->
-  <div class="form-box">
-    <h3>Add Stock Entry</h3>
-    <form id="stockForm">
-      <input type="text" id="party" placeholder="Party Name" required>
-      <input type="text" id="item" placeholder="Item Name" required>
-      <input type="number" id="quantity" placeholder="Quantity" required>
-      <input type="number" id="weight" placeholder="Weight (kg)" required>
+    <!-- Add Entry -->
+    <div class="card">
+      <h2>Add Stock Entry</h2>
+      <input type="text" id="party" placeholder="Party Name">
+      <input type="text" id="item" placeholder="Item Name">
+      <input type="number" id="quantity" placeholder="Quantity">
+      <input type="number" id="weight" placeholder="Weight (kg)">
       <input type="text" id="remarks" placeholder="Remarks">
-      <button type="submit">Add to Godown</button>
-    </form>
-  </div>
+      <button onclick="addStock()">Add Entry</button>
+    </div>
 
-  <!-- Stock Table -->
-  <div class="stock-box">
-    <h3>Godown Stock</h3>
-    <input type="text" id="search" class="search-bar" placeholder="Search by Party, Item, or Remarks">
-    <table id="stockTable">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Party</th>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Weight</th>
-          <th>Remarks</th>
-          <th>Date</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <!-- Search + Stock List -->
+    <div class="card">
+      <h2>Godown Stock</h2>
+      <div class="search-bar">
+        <input type="text" id="search" placeholder="🔍 Search by Party or Item" onkeyup="renderStock()">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Party</th><th>Item</th><th>Qty</th><th>Weight</th><th>Remarks</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="stockTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Ledger -->
+    <div class="card">
+      <h2>📑 Party Ledger</h2>
+      <div id="ledgerList"></div>
+    </div>
   </div>
 
   <script>
     let stock = JSON.parse(localStorage.getItem("godownStock")) || [];
+    let ledger = JSON.parse(localStorage.getItem("partyLedger")) || {};
 
-    function renderStock(filter="") {
-      const tbody = document.querySelector("#stockTable tbody");
-      tbody.innerHTML = "";
-      stock
-        .filter(entry => 
-          entry.party.toLowerCase().includes(filter) ||
-          entry.item.toLowerCase().includes(filter) ||
-          entry.remarks.toLowerCase().includes(filter)
-        )
-        .forEach((entry, index) => {
-          const row = `<tr>
-            <td>${index+1}</td>
-            <td>${entry.party}</td>
-            <td>${entry.item}</td>
-            <td>${entry.quantity}</td>
-            <td>${entry.weight}</td>
-            <td>${entry.remarks}</td>
-            <td>${entry.date}</td>
-            <td>
-              <button class="print-btn" onclick="printGatePass(${index})">Gate Pass</button>
-              <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
-            </td>
-          </tr>`;
-          tbody.innerHTML += row;
-        });
+    function addStock() {
+      let party = document.getElementById("party").value;
+      let item = document.getElementById("item").value;
+      let quantity = parseInt(document.getElementById("quantity").value);
+      let weight = parseFloat(document.getElementById("weight").value);
+      let remarks = document.getElementById("remarks").value;
+
+      if (!party || !item || isNaN(quantity) || isNaN(weight)) {
+        alert("❌ Fill all fields!");
+        return;
+      }
+
+      stock.push({ party, item, quantity, weight, remarks });
+      localStorage.setItem("godownStock", JSON.stringify(stock));
+
+      // Ledger add
+      if (!ledger[party]) {
+        ledger[party] = { totalQty: 0, totalWeight: 0, history: [] };
+      }
+      ledger[party].totalQty += quantity;
+      ledger[party].totalWeight += weight;
+      ledger[party].history.push({
+        date: new Date().toLocaleString(),
+        type: "Stock In",
+        item, qty: quantity, weight, remarks
+      });
+      localStorage.setItem("partyLedger", JSON.stringify(ledger));
+
+      renderStock();
+      renderLedger();
+
+      document.getElementById("party").value = "";
+      document.getElementById("item").value = "";
+      document.getElementById("quantity").value = "";
+      document.getElementById("weight").value = "";
+      document.getElementById("remarks").value = "";
     }
 
-    document.getElementById("stockForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      const entry = {
-        party: document.getElementById("party").value,
-        item: document.getElementById("item").value,
-        quantity: parseInt(document.getElementById("quantity").value),
-        weight: parseFloat(document.getElementById("weight").value),
-        remarks: document.getElementById("remarks").value,
-        date: new Date().toLocaleString()
-      };
-      stock.push(entry);
-      localStorage.setItem("godownStock", JSON.stringify(stock));
-      renderStock();
-      this.reset();
-    });
-
-    function deleteEntry(index) {
-      stock.splice(index, 1);
-      localStorage.setItem("godownStock", JSON.stringify(stock));
-      renderStock();
+    function renderStock() {
+      let search = document.getElementById("search").value.toLowerCase();
+      let rows = "";
+      stock.forEach((s, i) => {
+        if (s.party.toLowerCase().includes(search) || s.item.toLowerCase().includes(search)) {
+          rows += `<tr>
+            <td>${s.party}</td>
+            <td>${s.item}</td>
+            <td>${s.quantity}</td>
+            <td>${s.weight}</td>
+            <td>${s.remarks}</td>
+            <td>
+              <button onclick="printGatePass(${i})">📝 Gate Pass</button>
+            </td>
+          </tr>`;
+        }
+      });
+      document.getElementById("stockTable").innerHTML = rows;
     }
 
     function printGatePass(index) {
       const entry = stock[index];
+      let passQty = parseInt(prompt(`Enter Quantity (Available: ${entry.quantity})`, entry.quantity));
+      let passWeight = parseFloat(prompt(`Enter Weight (Available: ${entry.weight} kg)`, entry.weight));
+
+      if (isNaN(passQty) || passQty <= 0 || passQty > entry.quantity) { alert("❌ Invalid Qty!"); return; }
+      if (isNaN(passWeight) || passWeight <= 0 || passWeight > entry.weight) { alert("❌ Invalid Weight!"); return; }
+
       let gatePass = `
         <h2 style="text-align:center;">Darvesh Cargo - Gate Pass</h2>
         <p><strong>Party:</strong> ${entry.party}</p>
         <p><strong>Item:</strong> ${entry.item}</p>
-        <p><strong>Quantity:</strong> ${entry.quantity}</p>
-        <p><strong>Weight:</strong> ${entry.weight} kg</p>
+        <p><strong>Quantity:</strong> ${passQty}</p>
+        <p><strong>Weight:</strong> ${passWeight} kg</p>
         <p><strong>Remarks:</strong> ${entry.remarks}</p>
-        <p><strong>Date:</strong> ${entry.date}</p>
-        <hr>
-        <p style="text-align:center;">Authorized Sign & Stamp</p>
+        <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+        <hr><p style="text-align:center;">Authorized Sign & Stamp</p>
       `;
       const win = window.open("", "PrintWindow");
       win.document.write(gatePass);
       win.print();
       win.close();
 
-      // Auto minus from stock after printing
-      stock.splice(index, 1);
+      // update stock
+      entry.quantity -= passQty;
+      entry.weight -= passWeight;
+      if (entry.quantity <= 0 || entry.weight <= 0) stock.splice(index, 1);
+
+      // update ledger
+      ledger[entry.party].totalQty -= passQty;
+      ledger[entry.party].totalWeight -= passWeight;
+      ledger[entry.party].history.push({
+        date: new Date().toLocaleString(),
+        type: "Gate Pass Out",
+        item: entry.item,
+        qty: -passQty,
+        weight: -passWeight,
+        remarks: entry.remarks
+      });
+
       localStorage.setItem("godownStock", JSON.stringify(stock));
+      localStorage.setItem("partyLedger", JSON.stringify(ledger));
+
       renderStock();
+      renderLedger();
     }
 
-    document.getElementById("search").addEventListener("input", function(){
-      renderStock(this.value.toLowerCase());
-    });
+    function renderLedger() {
+      let html = "";
+      for (let party in ledger) {
+        let l = ledger[party];
+        html += `<div class="ledger-box">
+          <h3>${party}</h3>
+          <p><b>Total Qty:</b> ${l.totalQty}, <b>Total Weight:</b> ${l.totalWeight} kg</p>
+          <details>
+            <summary>📖 History</summary>
+            <ul>${l.history.map(h => `<li>${h.date} - ${h.type} - ${h.item} (${h.qty}, ${h.weight}kg) [${h.remarks}]</li>`).join("")}</ul>
+          </details>
+        </div>`;
+      }
+      document.getElementById("ledgerList").innerHTML = html;
+    }
 
-    // Initial load
     renderStock();
-    function printGatePass(index) {
-  const entry = stock[index];
-  
-  // user input for manual qty/weight
-  let passQty = parseInt(prompt(`Enter Quantity (Available: ${entry.quantity})`, entry.quantity));
-  let passWeight = parseFloat(prompt(`Enter Weight (Available: ${entry.weight} kg)`, entry.weight));
-
-  if (isNaN(passQty) || passQty <= 0 || passQty > entry.quantity) {
-    alert("❌ Invalid Quantity!");
-    return;
-  }
-  if (isNaN(passWeight) || passWeight <= 0 || passWeight > entry.weight) {
-    alert("❌ Invalid Weight!");
-    return;
-  }
-
-  // Gate pass slip
-  let gatePass = `
-    <h2 style="text-align:center;">Darvesh Cargo - Gate Pass</h2>
-    <p><strong>Party:</strong> ${entry.party}</p>
-    <p><strong>Item:</strong> ${entry.item}</p>
-    <p><strong>Quantity:</strong> ${passQty}</p>
-    <p><strong>Weight:</strong> ${passWeight} kg</p>
-    <p><strong>Remarks:</strong> ${entry.remarks}</p>
-    <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-    <hr>
-    <p style="text-align:center;">Authorized Sign & Stamp</p>
-  `;
-  const win = window.open("", "PrintWindow");
-  win.document.write(gatePass);
-  win.print();
-  win.close();
-
-  // Update stock (minus qty/weight)
-  entry.quantity -= passQty;
-  entry.weight -= passWeight;
-
-  if (entry.quantity <= 0 || entry.weight <= 0) {
-    // agar pura nikal gaya to entry delete
-    stock.splice(index, 1);
-  }
-
-  localStorage.setItem("godownStock", JSON.stringify(stock));
-  renderStock();
-}
+    renderLedger();
   </script>
 </body>
 </html>
-
