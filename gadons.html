@@ -87,6 +87,13 @@
     .print:hover {
       background: #218838;
     }
+    .manual {
+      background: #ffc107;
+      color: #333;
+    }
+    .manual:hover {
+      background: #e0a800;
+    }
     .delete {
       background: #dc3545;
       color: white;
@@ -129,7 +136,8 @@
           <td>200</td>
           <td>300</td>
           <td class="actions">
-            <button class="print" onclick="printGatePass('1001')">🖨 Gate Pass</button>
+            <button class="print" onclick="printGatePass(this, 'auto')">🖨 Auto Gate Pass</button>
+            <button class="manual" onclick="printGatePass(this, 'manual')">✍ Manual Gate Pass</button>
             <button class="delete" onclick="deleteEntry(this)">🗑 Delete</button>
           </td>
         </tr>
@@ -141,7 +149,8 @@
           <td>50</td>
           <td>50</td>
           <td class="actions">
-            <button class="print" onclick="printGatePass('1002')">🖨 Gate Pass</button>
+            <button class="print" onclick="printGatePass(this, 'auto')">🖨 Auto Gate Pass</button>
+            <button class="manual" onclick="printGatePass(this, 'manual')">✍ Manual Gate Pass</button>
             <button class="delete" onclick="deleteEntry(this)">🗑 Delete</button>
           </td>
         </tr>
@@ -160,9 +169,42 @@
       });
     }
 
-    // Print Gate Pass
-    function printGatePass(biltyNo) {
-      let content = "Gate Pass Generated for Bilty No: " + biltyNo + "\nDarvesh Cargo Services";
+    // Gate Pass Print Function
+    function printGatePass(btn, type) {
+      let row = btn.closest("tr").children;
+      let bilty = row[0].innerText;
+      let party = row[1].innerText;
+      let item = row[2].innerText;
+      let balance = parseInt(row[5].innerText);
+      let qtyOut = 0;
+
+      if (type === "auto") {
+        qtyOut = balance;
+      } else {
+        qtyOut = prompt("Enter Quantity to dispatch (Manual):", balance);
+        if (!qtyOut || isNaN(qtyOut) || qtyOut <= 0 || qtyOut > balance) {
+          alert("Invalid quantity!");
+          return;
+        }
+      }
+
+      // Update Table Balance
+      row[4].innerText = parseInt(row[4].innerText) + parseInt(qtyOut);
+      row[5].innerText = balance - qtyOut;
+
+      // Print Gate Pass
+      let content = `
+      🚛 Darvesh Cargo Services
+      ----------------------------------
+      Gate Pass
+      Bilty No: ${bilty}
+      Party: ${party}
+      Item: ${item}
+      Dispatched Qty: ${qtyOut}
+      Remaining Balance: ${row[5].innerText}
+      ----------------------------------
+      `;
+
       let newWin = window.open("", "", "width=600,height=400");
       newWin.document.write("<pre style='font-family:Arial;font-size:16px'>" + content + "</pre>");
       newWin.print();
