@@ -216,6 +216,73 @@
         btn.closest("tr").remove();
       }
     }
+    let stock = JSON.parse(localStorage.getItem("godownStock")) || [];
+let ledger = JSON.parse(localStorage.getItem("partyLedger")) || {};
+
+function printGatePass(index) {
+  const entry = stock[index];
+
+  // user input for manual qty/weight
+  let passQty = parseInt(prompt(`Enter Quantity (Available: ${entry.quantity})`, entry.quantity));
+  let passWeight = parseFloat(prompt(`Enter Weight (Available: ${entry.weight} kg)`, entry.weight));
+
+  if (isNaN(passQty) || passQty <= 0 || passQty > entry.quantity) {
+    alert("❌ Invalid Quantity!");
+    return;
+  }
+  if (isNaN(passWeight) || passWeight <= 0 || passWeight > entry.weight) {
+    alert("❌ Invalid Weight!");
+    return;
+  }
+
+  // Gate pass slip
+  let gatePass = `
+    <h2 style="text-align:center;">Darvesh Cargo - Gate Pass</h2>
+    <p><strong>Party:</strong> ${entry.party}</p>
+    <p><strong>Item:</strong> ${entry.item}</p>
+    <p><strong>Quantity:</strong> ${passQty}</p>
+    <p><strong>Weight:</strong> ${passWeight} kg</p>
+    <p><strong>Remarks:</strong> ${entry.remarks}</p>
+    <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+    <hr>
+    <p style="text-align:center;">Authorized Sign & Stamp</p>
+  `;
+  const win = window.open("", "PrintWindow");
+  win.document.write(gatePass);
+  win.print();
+  win.close();
+
+  // 🔹 Update stock (minus qty/weight)
+  entry.quantity -= passQty;
+  entry.weight -= passWeight;
+
+  if (entry.quantity <= 0 || entry.weight <= 0) {
+    stock.splice(index, 1); // pura nikal gaya to delete
+  }
+
+  // 🔹 Update Ledger
+  if (!ledger[entry.party]) {
+    ledger[entry.party] = { totalQty: 0, totalWeight: 0, history: [] };
+  }
+  ledger[entry.party].totalQty -= passQty;
+  ledger[entry.party].totalWeight -= passWeight;
+
+  ledger[entry.party].history.push({
+    date: new Date().toLocaleString(),
+    type: "Gate Pass Issued",
+    item: entry.item,
+    qty: -passQty,
+    weight: -passWeight,
+    remarks: entry.remarks
+  });
+
+  // Save updates
+  localStorage.setItem("godownStock", JSON.stringify(stock));
+  localStorage.setItem("partyLedger", JSON.stringify(ledger));
+
+  renderStock();
+}
+
   </script>
 
 </body>
