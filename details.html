@@ -156,6 +156,17 @@
           <td>20,000 PKR</td>
           <td><span class="status delivered">Delivered</span></td>
         </tr>
+        // booking.html
+<script>
+  let booking = { number: "001", name: "Ali" };
+  localStorage.setItem("bookingData", JSON.stringify(booking));
+  window.location.href = "details.html";
+</script>
+// details.html
+<script>
+  let data = JSON.parse(localStorage.getItem("bookingData"));
+  document.write(data.number + " - " + data.name);
+</script>
       </tbody>
     </table>
   </main>
