@@ -1,191 +1,111 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Booking Details — Dervesh Cargo Services </title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --deep-green:#134b2b;
-      --muted-green:#f2faf4;
-      --card-shadow:0 6px 20px rgba(10,30,15,.18);
-    }
-    body {
-      font-family:'Montserrat',sans-serif;
-      background:linear-gradient(180deg,#f7fbf8 0%, #e9f3ec 100%);
-      color:#1c2d20; margin:0; padding:0;
-      min-height:100vh; display:flex; flex-direction:column;
-    }
-    header {
-      background:var(--deep-green); color:#fff;
-      padding:16px 40px; display:flex;
-      justify-content:space-between; align-items:center;
-      box-shadow:var(--card-shadow);
-    }
-    header h1 {
-      font-family:'Playfair Display'; font-size:22px;
-    }
-    nav a {
-      color:#fff; margin-left:18px; text-decoration:none;
-      font-weight:600; transition:.2s;
-    }
-    nav a:hover {color:#c9f1d8}
-
-    main {flex:1; padding:40px; max-width:1200px; margin:0 auto;}
-    h2 {
-      font-family:'Playfair Display'; font-size:28px;
-      color:var(--deep-green); margin-bottom:20px;
-    }
-
-    /* 🔍 Search Bar Styling */
-    .search-box {
-      margin-bottom:20px;
-      display:flex; justify-content:flex-end;
-    }
-    .search-box input {
-      padding:10px 14px;
-      width:300px; max-width:100%;
-      border:2px solid var(--deep-green);
-      border-radius:10px;
-      font-size:14px;
-      outline:none;
-      box-shadow:inset 0 2px 5px rgba(0,0,0,0.05);
-      transition:.2s;
-    }
-    .search-box input:focus {
-      border-color:#0f6730;
-      box-shadow:0 0 6px rgba(19,75,43,0.4);
-    }
-
-    table {
-      width:100%; border-collapse:collapse;
-      background:#fff; border-radius:14px;
-      overflow:hidden; box-shadow:var(--card-shadow);
-    }
-    thead {background:var(--deep-green); color:#fff;}
-    th,td {
-      padding:14px 12px; text-align:left;
-      font-size:14px;
-    }
-    tbody tr:nth-child(even){background:var(--muted-green)}
-    tbody tr:hover {background:#d8f0de}
-    .status {
-      padding:4px 10px; border-radius:10px;
-      font-size:12px; font-weight:600; text-align:center; display:inline-block;
-    }
-    .status.pending {background:#fff3cd; color:#856404;}
-    .status.delivered {background:#d4edda; color:#155724;}
-    .status.intransit {background:#cce5ff; color:#004085;}
-    footer {
-      background:#123c25; color:#d7e9db;
-      padding:14px; text-align:center; font-size:13px;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Dervesh Cargo</h1>
-    <nav>
-      <a href="home.html">Home</a>
-      <a href="booking.html">Booking</a>
-      <a href="details.html">Booking Details</a>
-      <a href="gadons.html">Gadon</a>
-      <a href="accounts.html">Accounts</a>
-      <a href="daybook.html">Daybook</a>
-    </nav>
-  </header>
-
-  <main>
-    <h2>Booking Details</h2>
-
-    <!-- 🔍 Search bar -->
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search by Bilty No, Date, Sender, Receiver, Driver...">
-    </div>
-
-    <table id="detailsTable">
-      <thead>
-        <tr>
-          <th>Bilty No</th>
-          <th>Date</th>
-          <th>Sender</th>
-          <th>Receiver</th>
-          <th>Vehicle</th>
-          <th>Driver</th>
-          <th>Weight</th>
-          <th>Quantity</th>
-          <th>Price</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>BLT-1001</td>
-          <td>2025-08-30</td>
-          <td>Ali Khan</td>
-          <td>Bilal Ahmed</td>
-          <td>ABC-123</td>
-          <td>Imran</td>
-          <td>250kg</td>
-          <td>10</td>
-          <td>45,000 PKR</td>
-          <td><span class="status pending">Pending</span></td>
-        </tr>
-        <tr>
-          <td>BLT-1002</td>
-          <td>2025-08-28</td>
-          <td>Rashid</td>
-          <td>Hamza</td>
-          <td>XYZ-786</td>
-          <td>Sajid</td>
-          <td>400kg</td>
-          <td>18</td>
-          <td>72,000 PKR</td>
-          <td><span class="status intransit">In Transit</span></td>
-        </tr>
-        <tr>
-          <td>BLT-1003</td>
-          <td>2025-08-25</td>
-          <td>Nabeel</td>
-          <td>Shahzaib</td>
-          <td>KLM-456</td>
-          <td>Aslam</td>
-          <td>150kg</td>
-          <td>6</td>
-          <td>20,000 PKR</td>
-          <td><span class="status delivered">Delivered</span></td>
-        </tr>
-  <footer>© 2025 DERVESH CARGO SERVICES — All rights reserved.</footer>
-
-  <script>
-    // 🔍 Filter function
-    document.getElementById("searchInput").addEventListener("keyup", function() {
-      let filter = this.value.toLowerCase();
-      let rows = document.querySelectorAll("#detailsTable tbody tr");
-
-      rows.forEach(row => {
-        let text = row.textContent.toLowerCase();
-        row.style.display = text.includes(filter) ? "" : "none";
-      });
-    });
-  </script>
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Booking Details - Dervesh Cargo</title>
+  <title>Booking Details - Dervesh Cargo Services</title>
   <style>
-    body{font-family:Arial;background:#f9fdfb;padding:20px;}
-    h2{color:#134b2b;text-align:center;}
-    .search-box{max-width:400px;margin:20px auto;display:flex;gap:10px;}
-    .search-box input{flex:1;padding:8px;border:1px solid #ccc;border-radius:6px;}
-    table{width:100%;border-collapse:collapse;margin-top:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
-    th,td{padding:12px;border:1px solid #eee;text-align:left;}
-    th{background:#134b2b;color:#fff;}
-    tr:hover{background:#f1f7f4;}
+    body { font-family: Arial, sans-serif; background: #eef2f7; }
+    h2 { text-align: center; color: #333; }
+    table { width: 95%; margin: 20px auto; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #007bff; color: white; }
+    button { background: #28a745; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
+    button:hover { background: #218838; }
+    .search-box { width: 90%; margin: 15px auto; text-align: center; }
+    .search-box input { width: 60%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
+
+  <h2>Booking Details</h2>
+
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Search by Bilty No, Date, or Name...">
+  </div>
+
+  <table id="detailsTable">
+    <thead>
+      <tr>
+        <th>Bilty No</th>
+        <th>Date</th>
+        <th>Sender</th>
+        <th>Receiver</th>
+        <th>Vehicle</th>
+        <th>Driver</th>
+        <th>Weight</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Pickup</th>
+        <th>Drop</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    function loadBookings() {
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      let tbody = document.querySelector("#detailsTable tbody");
+      tbody.innerHTML = "";
+
+      bookings.forEach(b => {
+        let row = `
+          <tr>
+            <td>${b.biltyNo}</td>
+            <td>${b.date}</td>
+            <td>${b.sender}</td>
+            <td>${b.receiver}</td>
+            <td>${b.vehicle}</td>
+            <td>${b.driver} (${b.driverPhone})</td>
+            <td>${b.weight}</td>
+            <td>${b.qty}</td>
+            <td>${b.price}</td>
+            <td>${b.pickup}</td>
+            <td>${b.drop}</td>
+            <td><button onclick="printSlip('${b.biltyNo}')">Print</button></td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function printSlip(biltyNo) {
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      let b = bookings.find(x => x.biltyNo === biltyNo);
+
+      let slip = `
+        <h2>Dervesh Cargo Services</h2>
+        <p><b>Bilty No:</b> ${b.biltyNo}</p>
+        <p><b>Date:</b> ${b.date}</p>
+        <p><b>Sender:</b> ${b.sender}</p>
+        <p><b>Receiver:</b> ${b.receiver}</p>
+        <p><b>Vehicle:</b> ${b.vehicle}</p>
+        <p><b>Driver:</b> ${b.driver} (${b.driverPhone})</p>
+        <p><b>Weight:</b> ${b.weight}</p>
+        <p><b>Quantity:</b> ${b.qty}</p>
+        <p><b>Price:</b> ${b.price}</p>
+        <p><b>Pickup:</b> ${b.pickup}</p>
+        <p><b>Drop:</b> ${b.drop}</p>
+        <p><b>Remarks:</b> ${b.remarks}</p>
+      `;
+
+      let w = window.open("", "", "width=600,height=400");
+      w.document.write(slip);
+      w.print();
+    }
+
+    // Search filter
+    document.getElementById("search").addEventListener("keyup", function() {
+      let value = this.value.toLowerCase();
+      let rows = document.querySelectorAll("#detailsTable tbody tr");
+      rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+      });
+    });
+
+    window.onload = loadBookings;
+  </script>
+
+</body>
+</html>
