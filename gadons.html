@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Darvesh Cargo - Godown</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f9; margin:0; padding:20px; }
+    h2 { text-align:center; color:#333; margin-bottom:20px; }
+    .form-box, .stock-box {
+      background:#fff; padding:20px; margin:15px auto; border-radius:12px;
+      max-width:800px; box-shadow:0 3px 12px rgba(0,0,0,0.1);
+    }
+    input, select {
+      width:100%; padding:10px; margin:6px 0; border-radius:6px; border:1px solid #ccc;
+    }
+    button {
+      background:#007bff; color:#fff; border:none; padding:10px 20px;
+      border-radius:6px; cursor:pointer; margin-top:10px;
+    }
+    button:hover { background:#0056b3; }
+    table { width:100%; border-collapse: collapse; margin-top:20px; }
+    th, td { border:1px solid #ddd; padding:10px; text-align:center; }
+    th { background:#007bff; color:#fff; }
+    .delete-btn { background:red; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
+    .print-btn { background:green; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
+    .search-bar { margin:10px 0; padding:10px; width:100%; border-radius:8px; border:1px solid #aaa; }
+  </style>
+</head>
+<body>
+  <h2>Godown Stock Management</h2>
+
+  <!-- Stock Entry Form -->
+  <div class="form-box">
+    <h3>Add Stock Entry</h3>
+    <form id="stockForm">
+      <input type="text" id="party" placeholder="Party Name" required>
+      <input type="text" id="item" placeholder="Item Name" required>
+      <input type="number" id="quantity" placeholder="Quantity" required>
+      <input type="number" id="weight" placeholder="Weight (kg)" required>
+      <input type="text" id="remarks" placeholder="Remarks">
+      <button type="submit">Add to Godown</button>
+    </form>
+  </div>
+
+  <!-- Stock Table -->
+  <div class="stock-box">
+    <h3>Godown Stock</h3>
+    <input type="text" id="search" class="search-bar" placeholder="Search by Party, Item, or Remarks">
+    <table id="stockTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Party</th>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Weight</th>
+          <th>Remarks</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    let stock = JSON.parse(localStorage.getItem("godownStock")) || [];
+
+    function renderStock(filter="") {
+      const tbody = document.querySelector("#stockTable tbody");
+      tbody.innerHTML = "";
+      stock
+        .filter(entry => 
+          entry.party.toLowerCase().includes(filter) ||
+          entry.item.toLowerCase().includes(filter) ||
+          entry.remarks.toLowerCase().includes(filter)
+        )
+        .forEach((entry, index) => {
+          const row = `<tr>
+            <td>${index+1}</td>
+            <td>${entry.party}</td>
+            <td>${entry.item}</td>
+            <td>${entry.quantity}</td>
+            <td>${entry.weight}</td>
+            <td>${entry.remarks}</td>
+            <td>${entry.date}</td>
+            <td>
+              <button class="print-btn" onclick="printGatePass(${index})">Gate Pass</button>
+              <button class="delete-btn" onclick="deleteEntry(${index})">Delete</button>
+            </td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+    }
+
+    document.getElementById("stockForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const entry = {
+        party: document.getElementById("party").value,
+        item: document.getElementById("item").value,
+        quantity: parseInt(document.getElementById("quantity").value),
+        weight: parseFloat(document.getElementById("weight").value),
+        remarks: document.getElementById("remarks").value,
+        date: new Date().toLocaleString()
+      };
+      stock.push(entry);
+      localStorage.setItem("godownStock", JSON.stringify(stock));
+      renderStock();
+      this.reset();
+    });
+
+    function deleteEntry(index) {
+      stock.splice(index, 1);
+      localStorage.setItem("godownStock", JSON.stringify(stock));
+      renderStock();
+    }
+
+    function printGatePass(index) {
+      const entry = stock[index];
+      let gatePass = `
+        <h2 style="text-align:center;">Darvesh Cargo - Gate Pass</h2>
+        <p><strong>Party:</strong> ${entry.party}</p>
+        <p><strong>Item:</strong> ${entry.item}</p>
+        <p><strong>Quantity:</strong> ${entry.quantity}</p>
+        <p><strong>Weight:</strong> ${entry.weight} kg</p>
+        <p><strong>Remarks:</strong> ${entry.remarks}</p>
+        <p><strong>Date:</strong> ${entry.date}</p>
+        <hr>
+        <p style="text-align:center;">Authorized Sign & Stamp</p>
+      `;
+      const win = window.open("", "PrintWindow");
+      win.document.write(gatePass);
+      win.print();
+      win.close();
+
+      // Auto minus from stock after printing
+      stock.splice(index, 1);
+      localStorage.setItem("godownStock", JSON.stringify(stock));
+      renderStock();
+    }
+
+    document.getElementById("search").addEventListener("input", function(){
+      renderStock(this.value.toLowerCase());
+    });
+
+    // Initial load
+    renderStock();
+  </script>
+</body>
+</html>
 
