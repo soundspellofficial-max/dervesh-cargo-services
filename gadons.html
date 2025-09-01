@@ -1,104 +1,153 @@
-<table border="1" id="godownTable">
-  <thead>
-    <tr>
-      <th>Bilty</th><th>Party</th><th>Item</th>
-      <th>Qty In</th><th>Qty Out</th><th>Balance</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Godown Management - Darvesh Cargo</title>
+  <style>
+    body {font-family:'Segoe UI',sans-serif;background:#f2f4f7;margin:0;padding:0;}
+    header {background:linear-gradient(135deg,#003366,#005599);color:#fff;padding:20px;text-align:center;font-size:24px;font-weight:bold;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    .container {width:90%;margin:30px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);}
+    .search-bar {margin-bottom:20px;display:flex;justify-content:space-between;}
+    .search-bar input {width:70%;padding:10px;border-radius:8px;border:1px solid #ccc;font-size:16px;}
+    .search-bar button {padding:10px 18px;background:#0077cc;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;transition:0.3s;}
+    .search-bar button:hover {background:#005fa3;}
+    table {width:100%;border-collapse:collapse;margin-bottom:20px;}
+    table,th,td {border:1px solid #eee;}
+    th,td {padding:12px;text-align:center;}
+    th {background:#0077cc;color:white;}
+    tr:nth-child(even){background:#f9f9f9;}
+    .actions button {padding:6px 12px;margin:2px;border:none;border-radius:6px;cursor:pointer;font-size:14px;transition:0.3s;}
+    .print {background:#28a745;color:white;}
+    .print:hover {background:#218838;}
+    .manual {background:#ffc107;color:#333;}
+    .manual:hover {background:#e0a800;}
+    .delete {background:#dc3545;color:white;}
+    .delete:hover {background:#b02a37;}
+  </style>
+</head>
+<body>
 
-<script>
-let bookingData = JSON.parse(localStorage.getItem("bookingData")) || [];
-let tableBody = document.querySelector("#godownTable tbody");
+  <header>
+    📦 Godown Management - Darvesh Cargo
+  </header>
 
-function renderTable() {
-    tableBody.innerHTML = "";
-    bookingData.forEach((d, i) => {
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by Party Name, Bilty No, Item...">
+      <button onclick="searchEntry()">🔍 Search</button>
+      <button onclick="loadBookingData()">↻ Refresh from Booking</button>
+    </div>
+
+    <table id="godownTable">
+      <thead>
+        <tr>
+          <th>Bilty No</th>
+          <th>Party Name</th>
+          <th>Item</th>
+          <th>Qty In</th>
+          <th>Qty Out</th>
+          <th>Balance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data yahan Booking Details se load hoga -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // 🔹 Dummy Booking Data (yeh data "Booking Details Page" se fetch hoga)
+    let bookingData = [
+      {bilty:"2001", party:"Ali Traders", item:"Cement Bags", qtyIn:400, qtyOut:100},
+      {bilty:"2002", party:"Hassan Goods", item:"Steel Rods", qtyIn:150, qtyOut:30},
+      {bilty:"2003", party:"Khan Brothers", item:"Tiles", qtyIn:250, qtyOut:0}
+    ];
+
+    // 🔹 Load Data from Booking into Godown Table
+    function loadBookingData() {
+      let tbody = document.querySelector("#godownTable tbody");
+      tbody.innerHTML = "";
+      bookingData.forEach(d => {
         let balance = d.qtyIn - d.qtyOut;
-        tableBody.innerHTML += `<tr>
-            <td>${d.bilty}</td>
-            <td>${d.party}</td>
-            <td>${d.item}</td>
-            <td>${d.qtyIn}</td>
-            <td><input type="number" value="${d.qtyOut}" 
-                       onchange="updateOut(${i}, this.value)"></td>
-            <td>${balance}</td>
-        </tr>`;
-    });
-}
-
-function updateOut(index, val) {
-    bookingData[index].qtyOut = parseInt(val) || 0;
-    localStorage.setItem("bookingData", JSON.stringify(bookingData));
-    renderTable();
-}
-
-renderTable();
-</script>
-<form id="bookingForm">
-  <input type="text" id="bilty" placeholder="Bilty No" required>
-  <input type="text" id="party" placeholder="Party Name" required>
-  <input type="text" id="item" placeholder="Item" required>
-  <input type="number" id="qty" placeholder="Quantity In" required>
-  <button type="submit">Submit</button>
-</form>
-
-<script>
-document.getElementById("bookingForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    let bookingData = JSON.parse(localStorage.getItem("bookingData")) || [];
-
-    let newBooking = {
-        bilty: document.getElementById("bilty").value,
-        party: document.getElementById("party").value,
-        item: document.getElementById("item").value,
-        qtyIn: parseInt(document.getElementById("qty").value),
-        qtyOut: 0
-    };
-
-    bookingData.push(newBooking);
-    localStorage.setItem("bookingData", JSON.stringify(bookingData));
-
-    alert("Booking Saved Successfully!");
-    this.reset();
-});
-</script>
-<input type="text" id="searchBar" placeholder="Search by Bilty or Party">
-<table border="1" id="detailsTable">
-  <thead>
-    <tr>
-      <th>Bilty</th><th>Party</th><th>Item</th><th>Qty In</th><th>Qty Out</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<script>
-let bookingData = JSON.parse(localStorage.getItem("bookingData")) || [];
-let tableBody = document.querySelector("#detailsTable tbody");
-
-function renderTable(data) {
-    tableBody.innerHTML = "";
-    data.forEach(d => {
-        tableBody.innerHTML += `<tr>
+        tbody.innerHTML += `
+          <tr>
             <td>${d.bilty}</td>
             <td>${d.party}</td>
             <td>${d.item}</td>
             <td>${d.qtyIn}</td>
             <td>${d.qtyOut}</td>
-        </tr>`;
-    });
-}
+            <td>${balance}</td>
+            <td class="actions">
+              <button class="print" onclick="printGatePass(this, 'auto')">🖨 Auto Gate Pass</button>
+              <button class="manual" onclick="printGatePass(this, 'manual')">✍ Manual Gate Pass</button>
+              <button class="delete" onclick="deleteEntry(this)">🗑 Delete</button>
+            </td>
+          </tr>`;
+      });
+    }
 
-document.getElementById("searchBar").addEventListener("input", function() {
-    let val = this.value.toLowerCase();
-    let filtered = bookingData.filter(d => 
-        d.bilty.toLowerCase().includes(val) || d.party.toLowerCase().includes(val)
-    );
-    renderTable(filtered);
-});
+    // 🔹 Search Function
+    function searchEntry() {
+      let input = document.getElementById("searchInput").value.toLowerCase();
+      let rows = document.querySelectorAll("#godownTable tbody tr");
+      rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? "" : "none";
+      });
+    }
 
-renderTable(bookingData);
-</script>
+    // 🔹 Gate Pass Print Function
+    function printGatePass(btn, type) {
+      let row = btn.closest("tr").children;
+      let bilty = row[0].innerText;
+      let party = row[1].innerText;
+      let item = row[2].innerText;
+      let balance = parseInt(row[5].innerText);
+      let qtyOut = 0;
+
+      if (type === "auto") {
+        qtyOut = balance;
+      } else {
+        qtyOut = prompt("Enter Quantity to dispatch (Manual):", balance);
+        if (!qtyOut || isNaN(qtyOut) || qtyOut <= 0 || qtyOut > balance) {
+          alert("Invalid quantity!");
+          return;
+        }
+      }
+
+      // Update Table Balance
+      row[4].innerText = parseInt(row[4].innerText) + parseInt(qtyOut);
+      row[5].innerText = balance - qtyOut;
+
+      // Print Gate Pass
+      let content = `
+      🚛 Darvesh Cargo Services
+      ----------------------------------
+      Gate Pass
+      Bilty No: ${bilty}
+      Party: ${party}
+      Item: ${item}
+      Dispatched Qty: ${qtyOut}
+      Remaining Balance: ${row[5].innerText}
+      ----------------------------------
+      `;
+
+      let newWin = window.open("", "", "width=600,height=400");
+      newWin.document.write("<pre style='font-family:Arial;font-size:16px'>" + content + "</pre>");
+      newWin.print();
+    }
+
+    // 🔹 Delete Entry
+    function deleteEntry(btn) {
+      if (confirm("Are you sure you want to delete this entry?")) {
+        btn.closest("tr").remove();
+      }
+    }
+
+    // Page Load pe Data fetch kare
+    window.onload = loadBookingData;
+  </script>
+
+</body>
+</html>
