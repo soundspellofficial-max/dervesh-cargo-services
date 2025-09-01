@@ -148,6 +148,34 @@
     // Page Load pe Data fetch kare
     window.onload = loadBookingData;
   </script>
+  <form id="bookingForm">
+  <input type="text" id="bilty" placeholder="Bilty No" required>
+  <input type="text" id="party" placeholder="Party Name" required>
+  <input type="text" id="item" placeholder="Item" required>
+  <input type="number" id="qty" placeholder="Quantity In" required>
+  <button type="submit">Submit</button>
+</form>
 
+<script>
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let bookingData = JSON.parse(localStorage.getItem("bookingData")) || [];
+
+    let newBooking = {
+        bilty: document.getElementById("bilty").value,
+        party: document.getElementById("party").value,
+        item: document.getElementById("item").value,
+        qtyIn: parseInt(document.getElementById("qty").value),
+        qtyOut: 0
+    };
+
+    bookingData.push(newBooking);
+    localStorage.setItem("bookingData", JSON.stringify(bookingData));
+
+    alert("Booking Saved Successfully!");
+    this.reset();
+});
+</script>
 </body>
 </html>
