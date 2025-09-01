@@ -36,3 +36,69 @@ function updateOut(index, val) {
 
 renderTable();
 </script>
+<form id="bookingForm">
+  <input type="text" id="bilty" placeholder="Bilty No" required>
+  <input type="text" id="party" placeholder="Party Name" required>
+  <input type="text" id="item" placeholder="Item" required>
+  <input type="number" id="qty" placeholder="Quantity In" required>
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let bookingData = JSON.parse(localStorage.getItem("bookingData")) || [];
+
+    let newBooking = {
+        bilty: document.getElementById("bilty").value,
+        party: document.getElementById("party").value,
+        item: document.getElementById("item").value,
+        qtyIn: parseInt(document.getElementById("qty").value),
+        qtyOut: 0
+    };
+
+    bookingData.push(newBooking);
+    localStorage.setItem("bookingData", JSON.stringify(bookingData));
+
+    alert("Booking Saved Successfully!");
+    this.reset();
+});
+</script>
+<input type="text" id="searchBar" placeholder="Search by Bilty or Party">
+<table border="1" id="detailsTable">
+  <thead>
+    <tr>
+      <th>Bilty</th><th>Party</th><th>Item</th><th>Qty In</th><th>Qty Out</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+let bookingData = JSON.parse(localStorage.getItem("bookingData")) || [];
+let tableBody = document.querySelector("#detailsTable tbody");
+
+function renderTable(data) {
+    tableBody.innerHTML = "";
+    data.forEach(d => {
+        tableBody.innerHTML += `<tr>
+            <td>${d.bilty}</td>
+            <td>${d.party}</td>
+            <td>${d.item}</td>
+            <td>${d.qtyIn}</td>
+            <td>${d.qtyOut}</td>
+        </tr>`;
+    });
+}
+
+document.getElementById("searchBar").addEventListener("input", function() {
+    let val = this.value.toLowerCase();
+    let filtered = bookingData.filter(d => 
+        d.bilty.toLowerCase().includes(val) || d.party.toLowerCase().includes(val)
+    );
+    renderTable(filtered);
+});
+
+renderTable(bookingData);
+</script>
