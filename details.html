@@ -105,6 +105,17 @@
     });
 
     window.onload = loadBookings;
+    // Example in details.html after form submit:
+let bookingData = JSON.parse(localStorage.getItem("bookingData")) || [];
+bookingData.push({
+  bilty: "2001",
+  party: "Ali Traders",
+  item: "Cement Bags",
+  qtyIn: 400,
+  qtyOut: 100
+});
+localStorage.setItem("bookingData", JSON.stringify(bookingData));
+
   </script>
 
 </body>
