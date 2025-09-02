@@ -1,1 +1,47 @@
+-- BOOKINGS TABLE
+CREATE TABLE IF NOT EXISTS bookings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    bilty_no TEXT UNIQUE,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sender_name TEXT,
+    receiver_name TEXT,
+    vehicle_no TEXT,
+    driver_name TEXT,
+    driver_phone TEXT,
+    weight DECIMAL(10,2),
+    quantity INT,
+    price DECIMAL(10,2),
+    remarks TEXT,
+    pickup_location TEXT,
+    drop_location TEXT
+);
+
+-- ACCOUNTS TABLE
+CREATE TABLE IF NOT EXISTS accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    booking_id INTEGER,
+    debit DECIMAL(10,2),
+    credit DECIMAL(10,2),
+    remarks TEXT,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id)
+);
+
+-- GODOWNS TABLE
+CREATE TABLE IF NOT EXISTS godowns (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    booking_id INTEGER,
+    stock_in INT,
+    stock_out INT,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id)
+);
+
+-- DAYBOOK TABLE
+CREATE TABLE IF NOT EXISTS daybook (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    booking_id INTEGER,
+    description TEXT,
+    amount DECIMAL(10,2),
+    FOREIGN KEY (booking_id) REFERENCES bookings(id)
+);
 
