@@ -250,3 +250,88 @@ def api_manual_ledger():
 def accounts_page():
     return render_template("accounts.html")
 ```)
+from flask import Flask, request, jsonify, render_template
+import sqlite3
+from datetime import datetime
+
+app = Flask(__name__)
+
+# --- Database Helper ---
+def get_db():
+    conn = sqlite3.connect("cargo.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+# --- Create Tables if not exist ---
+def init_db():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS invoices(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        invoice_no INTEGER UNIQUE,
+        date TEXT,
+        party_name TEXT,
+        description TEXT,
+        amount REAL
+    )
+    """)
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# --- Routes ---
+@app.route("/")
+def home():
+    return render_template("accounts.html")
+
+@app.route("/api/invoice", methods=["POST"])
+def add_invoice():
+    data = request.json
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Auto Invoice Number
+    cur.execute("SELECT MAX(invoice_no) FROM invoices")
+    last_no = cur.fetchone()[0]
+    next_no = (last_no + 1) if last_no else 1001
+
+    today = datetime.today().strftime("%Y-%m-%d")
+
+    cur.execute("INSERT INTO invoices (invoice_no,date,party_name,description,amount) VALUES (?,?,?,?,?)",
+                (next_no, today, data["party_name"], data["description"], data["amount"]))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "success", "invoice_no": next_no})
+
+@app.route("/api/invoices", methods=["GET"])
+def get_invoices():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM invoices ORDER BY id DESC")
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    return jsonify(rows)
+
+@app.route("/api/invoice/<int:id>", methods=["DELETE"])
+def delete_invoice(id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM invoices WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "deleted"})
+
+@app.route("/api/ledger/<party>", methods=["GET"])
+def ledger(party):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT date,description,amount as debit, NULL as credit FROM invoices WHERE party_name=? ORDER BY date", (party,))
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    return jsonify(rows)
+
+if __name__ == "__main__":
+    app.run(debug=True)
