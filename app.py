@@ -246,3 +246,7 @@ def api_manual_ledger():
     conn.commit()
     conn.close()
     return jsonify({"status":"success"})
+@app.route("/accounts")
+def accounts_page():
+    return render_template("accounts.html")
+```)
