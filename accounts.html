@@ -48,163 +48,55 @@
     </nav>
   </header>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>Accounts — Darvesh Cargo</title>
-  <style>
-    body{font-family:Arial;background:#f4f6f9;margin:0;padding:20px}
-    .wrap{max-width:1100px;margin:0 auto}
-    .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);margin-bottom:18px}
-    h2{color:#134b2b}
-    input,select,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:6px}
-    .row{display:flex;gap:12px}
-    .col{flex:1}
-    button{padding:10px 14px;border:none;border-radius:8px;cursor:pointer}
-    .btn-primary{background:#0f6b38;color:#fff}
-    .btn-danger{background:#d9534f;color:#fff}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border:1px solid #eee;text-align:left}
-  </style>
+  <title>Accounts Module</title>
 </head>
 <body>
-  <div class="wrap">
-    <h2>Accounts / Invoices</h2>
+  <h2>Create Invoice</h2>
+  <input id="party" placeholder="Party Name">
+  <input id="desc" placeholder="Description">
+  <input id="amt" type="number" placeholder="Amount">
+  <button onclick="save()">Save</button>
 
-    <div class="card">
-      <h3>Create Invoice</h3>
-      <div>
-        <input id="invoice_no" placeholder="Invoice No (unique)">
-        <input id="party_name" placeholder="Party Name">
-        <input id="amount" type="number" placeholder="Amount">
-        <input id="desc" placeholder="Description">
-        <div style="margin-top:8px">
-          <button class="btn-primary" onclick="createInvoice()">Save Invoice</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Invoices</h3>
-      <table>
-        <thead><tr><th>#</th><th>Invoice No</th><th>Party</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead>
-        <tbody id="invoices_table"></tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h3>Party Ledger / Search</h3>
-      <div class="row">
-        <div class="col">
-          <input id="ledger_party" placeholder="Enter party name and press Enter">
-        </div>
-        <div class="col" style="max-width:160px">
-          <button class="btn-primary" onclick="loadParties()">Load Parties</button>
-        </div>
-      </div>
-
-      <div id="ledger_view" style="margin-top:12px"></div>
-    </div>
-  </div>
+  <h2>Invoices</h2>
+  <table border="1" id="inv_tbl"><thead>
+    <tr><th>Invoice #</th><th>Date</th><th>Party</th><th>Amount</th><th>Action</th></tr>
+  </thead><tbody></tbody></table>
 
 <script>
-async function createInvoice(){
-  let invoice_no = document.getElementById("invoice_no").value.trim();
-  let party_name = document.getElementById("party_name").value.trim();
-  let amount = parseFloat(document.getElementById("amount").value) || 0;
-  let description = document.getElementById("desc").value || "";
-
-  if(!invoice_no || !party_name || amount<=0){
-    alert("Invoice number, party and positive amount required");
-    return;
-  }
-
+async function save(){
   let res = await fetch("/api/invoice", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({invoice_no, party_name, description, amount})
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      party_name:document.getElementById("party").value,
+      description:document.getElementById("desc").value,
+      amount:document.getElementById("amt").value
+    })
   });
   let data = await res.json();
-  if(data.status === "success"){
-    alert("Invoice saved");
-    document.getElementById("invoice_no").value="";
-    document.getElementById("party_name").value="";
-    document.getElementById("amount").value="";
-    document.getElementById("desc").value="";
-    loadInvoices();
-  } else {
-    alert("Error: "+(data.message||JSON.stringify(data)));
-  }
+  alert("Invoice Saved: #"+data.invoice_no);
+  load();
 }
 
-async function loadInvoices(){
+async function load(){
   let res = await fetch("/api/invoices");
   let list = await res.json();
-  let tbody = document.getElementById("invoices_table");
-  tbody.innerHTML = "";
-  list.forEach((inv,i)=>{
-    tbody.innerHTML += `<tr>
-      <td>${i+1}</td>
-      <td>${inv.invoice_no}</td>
-      <td>${inv.party_name}</td>
-      <td>${inv.amount}</td>
-      <td>${inv.date}</td>
-      <td>
-        <button onclick="viewLedger('${inv.party_name}')">Ledger</button>
-        <button onclick="deleteInvoice(${inv.id})" style="background:#d9534f;color:#fff;border:none;padding:6px 10px;border-radius:6px">Delete</button>
-      </td>
-    </tr>`;
+  let html="";
+  list.forEach(i=>{
+    html += `<tr><td>${i.invoice_no}</td><td>${i.date}</td><td>${i.party_name}</td><td>${i.amount}</td>
+    <td><button onclick="del(${i.id})">Delete</button></td></tr>`;
   });
+  document.querySelector("#inv_tbl tbody").innerHTML=html;
 }
 
-async function deleteInvoice(id){
-  if(!confirm("Delete invoice and its ledger entries?")) return;
-  let res = await fetch("/api/invoice/"+id, {method:"DELETE"});
-  let data = await res.json();
-  if(data.status==="success"){ alert("Deleted"); loadInvoices(); document.getElementById("ledger_view").innerHTML=""; }
-  else alert("Error: "+(data.message||JSON.stringify(data)));
+async function del(id){
+  await fetch("/api/invoice/"+id,{method:"DELETE"});
+  load();
 }
 
-async function viewLedger(party){
-  document.getElementById("ledger_party").value = party;
-  let res = await fetch("/api/ledger/"+encodeURIComponent(party));
-  let data = await res.json();
-  let html = `<h4>Ledger - ${party} (Balance: ${data.balance})</h4>`;
-  html += `<table><thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th></tr></thead><tbody>`;
-  data.entries.forEach(e=>{
-    html += `<tr>
-      <td>${e.date}</td>
-      <td>${e.description||""}</td>
-      <td>${e.debit||""}</td>
-      <td>${e.credit||""}</td>
-    </tr>`;
-  });
-  html += `</tbody></table>`;
-  document.getElementById("ledger_view").innerHTML = html;
-}
-
-document.getElementById("ledger_party").addEventListener("keypress", function(e){
-  if(e.key === "Enter"){
-    let p = this.value.trim();
-    if(p) viewLedger(p);
-  }
-});
-
-async function loadParties(){
-  let res = await fetch("/api/parties");
-  let list = await res.json();
-  let html = "<h4>Parties</h4><table><thead><tr><th>Party</th><th>Balance</th></tr></thead><tbody>";
-  list.forEach(p=>{
-    html += `<tr onclick="viewLedger('${p.party_name}')" style="cursor:pointer">
-      <td>${p.party_name}</td><td>${p.balance}</td>
-    </tr>`;
-  });
-  html += "</tbody></table>";
-  document.getElementById("ledger_view").innerHTML = html;
-}
-
-// init
-loadInvoices();
+load();
 </script>
 </body>
 </html>
