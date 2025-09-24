@@ -48,25 +48,84 @@
     </nav>
   </header>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Accounts Module</title>
+  <meta charset="UTF-8">
+  <title>Darvesh Cargo - Accounts</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f8f9fa; }
+    .card { border-radius:15px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-bottom:20px; }
+    .nav-tabs .nav-link.active { background:#0d6efd; color:#fff; }
+    .table th { background:#0d6efd; color:#fff; }
+  </style>
 </head>
 <body>
-  <h2>Create Invoice</h2>
-  <input id="party" placeholder="Party Name">
-  <input id="desc" placeholder="Description">
-  <input id="amt" type="number" placeholder="Amount">
-  <button onclick="save()">Save</button>
+<div class="container py-4">
 
-  <h2>Invoices</h2>
-  <table border="1" id="inv_tbl"><thead>
-    <tr><th>Invoice #</th><th>Date</th><th>Party</th><th>Amount</th><th>Action</th></tr>
-  </thead><tbody></tbody></table>
+  <h2 class="mb-4 text-center">📊 Accounts Dashboard</h2>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item"><button class="nav-link active" id="inv-tab" data-bs-toggle="tab" data-bs-target="#inv" type="button">Invoice Entry</button></li>
+    <li class="nav-item"><button class="nav-link" id="ledger-tab" data-bs-toggle="tab" data-bs-target="#ledger" type="button">Ledger</button></li>
+    <li class="nav-item"><button class="nav-link" id="daybook-tab" data-bs-toggle="tab" data-bs-target="#daybook" type="button">Day Book</button></li>
+  </ul>
+
+  <div class="tab-content pt-3">
+    <!-- Invoice Entry -->
+    <div class="tab-pane fade show active" id="inv">
+      <div class="card p-4">
+        <h4>Create Invoice</h4>
+        <div class="row g-3">
+          <div class="col-md-4"><input id="party" class="form-control" placeholder="Party Name"></div>
+          <div class="col-md-4"><input id="desc" class="form-control" placeholder="Description"></div>
+          <div class="col-md-4"><input id="amt" class="form-control" type="number" placeholder="Amount"></div>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-success" onclick="save()">💾 Save Invoice</button>
+        </div>
+      </div>
+
+      <div class="card p-3">
+        <h4>Invoices List</h4>
+        <table class="table table-bordered" id="inv_tbl">
+          <thead><tr><th>Invoice #</th><th>Date</th><th>Party</th><th>Description</th><th>Amount</th><th>Action</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Ledger -->
+    <div class="tab-pane fade" id="ledger">
+      <div class="card p-4">
+        <h4>Party Ledger</h4>
+        <input id="ledgerParty" class="form-control mb-3" placeholder="Enter Party Name">
+        <button class="btn btn-primary mb-3" onclick="loadLedger()">View Ledger</button>
+        <table class="table table-bordered" id="ledger_tbl">
+          <thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <h5 id="balance" class="mt-2"></h5>
+      </div>
+    </div>
+
+    <!-- Daybook -->
+    <div class="tab-pane fade" id="daybook">
+      <div class="card p-4">
+        <h4>Day Book</h4>
+        <table class="table table-bordered" id="day_tbl">
+          <thead><tr><th>Date</th><th>Invoice #</th><th>Party</th><th>Description</th><th>Amount</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 async function save(){
-  let res = await fetch("/api/invoice", {
+  let res = await fetch("/api/invoice",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
@@ -76,27 +135,51 @@ async function save(){
     })
   });
   let data = await res.json();
-  alert("Invoice Saved: #"+data.invoice_no);
-  load();
+  if(data.status=="success"){ alert("Invoice Saved #"+data.invoice_no); loadInvoices(); loadDaybook(); }
+  else alert("Error: "+data.msg);
 }
 
-async function load(){
+async function loadInvoices(){
   let res = await fetch("/api/invoices");
   let list = await res.json();
   let html="";
   list.forEach(i=>{
-    html += `<tr><td>${i.invoice_no}</td><td>${i.date}</td><td>${i.party_name}</td><td>${i.amount}</td>
-    <td><button onclick="del(${i.id})">Delete</button></td></tr>`;
+    html += `<tr><td>${i.invoice_no}</td><td>${i.date}</td><td>${i.party_name}</td><td>${i.description}</td><td>${i.amount}</td>
+    <td><button class='btn btn-sm btn-danger' onclick='del(${i.id})'>Delete</button></td></tr>`;
   });
   document.querySelector("#inv_tbl tbody").innerHTML=html;
 }
 
 async function del(id){
   await fetch("/api/invoice/"+id,{method:"DELETE"});
-  load();
+  loadInvoices(); loadDaybook();
 }
 
-load();
+async function loadLedger(){
+  let p=document.getElementById("ledgerParty").value;
+  let res = await fetch("/api/ledger/"+p);
+  let list = await res.json();
+  let html=""; let bal=0;
+  list.forEach(r=>{
+    html+=`<tr><td>${r.date}</td><td>${r.description}</td><td>${r.debit||''}</td><td>${r.credit||''}</td></tr>`;
+    bal+= (r.debit||0)-(r.credit||0);
+  });
+  document.querySelector("#ledger_tbl tbody").innerHTML=html;
+  document.getElementById("balance").innerText="Balance: "+bal;
+}
+
+async function loadDaybook(){
+  let res = await fetch("/api/invoices");
+  let list = await res.json();
+  let html="";
+  list.forEach(i=>{
+    html+=`<tr><td>${i.date}</td><td>${i.invoice_no}</td><td>${i.party_name}</td><td>${i.description}</td><td>${i.amount}</td></tr>`;
+  });
+  document.querySelector("#day_tbl tbody").innerHTML=html;
+}
+
+loadInvoices(); loadDaybook();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
